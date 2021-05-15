@@ -1,8 +1,28 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
+app = Ursina()
+
+# загрузка текстур
+grass_block = load_texture('assets/grass_block.png')
+dirt_block = load_texture('assets/dirt_block.png')
+stone_block = load_texture('assets/stone_block.png')
+brick_block= load_texture('assets/brick_block.png')
+sky_t = load_texture('assets/skybox.png')
+block = grass_block
+
+def update():
+    global block
+    if held_keys['1']:
+        block = grass_block
+    if held_keys['2']:
+        block = dirt_block
+    if held_keys['3']:
+        block = stone_block
+    if held_keys['4']:
+        block = brick_block
+
 
 # ///////////////////////////////////////
-#studing 1
 # class Test_Qube(Entity):
 #     def __init__(self):
 #         super().__init__(
@@ -62,37 +82,43 @@ from ursina.prefabs.first_person_controller import FirstPersonController
 #
 # app.run()
 # //////////////////////////////////////////////////////////////////
-# studing 2
+
+class Sky(Entity):
+    def __init__(self):
+        super().__init__(
+            parent=scene,
+            model='sphere',
+            texture=sky_t,
+            scale=300,
+            double_sided=True
+        )
 
 
 class Cube(Button):
-    def __init__(self, position = (0,0,0)):
+    def __init__(self, position = (0,0,0),block_t = grass_block):
         super().__init__(
             parent = scene,
             position = position,
-            model = 'cube',
-            origin_y = 30,
-            texture = 'white_cube',
+            model = 'assets/block',
+            origin_y = 0.5,
+            texture = block_t,
+            scale = 0.5,
             color = color.white,
-            highlight_color = color.red
+            highlight_color = color.white
         )
     def input(self, key):
         # если нажали любую кнопку
         if self.hovered:
             if key == 'right mouse down':
-                cube = Cube(self.position + mouse.normal)
+                cube = Cube(self.position + mouse.normal,block)
             if key == 'left mouse down':
                 destroy(self)
 
-app = Ursina()
-
-#cube = Cube()
 
 for z in range(16):
     for x in range(16):
         cube = Cube((x,0,z))
 
 player = FirstPersonController()
-
-app.run()
+sky = Sky()
 app.run()
